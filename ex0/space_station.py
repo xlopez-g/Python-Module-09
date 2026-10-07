@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ValidationError
 from datetime import datetime
 
 
-class Spacetion(BaseModel):
+class Space_Station(BaseModel):
     station_id: str = Field(min_length=3, max_length=10)
     name: str = Field(min_length=1, max_length=50)
     crew_size: int = Field(ge=1, le=20)
@@ -20,11 +20,14 @@ def space_station() -> None:
     print("Space Station Data Validation")
     print("========================================")
 
-    starstation = Spacetion(station_id="ISS001",
-                            name="International Space Station", crew_size=6,
-                            power_level=85.5, oxygen_level=92.3,
-                            last_maintenance=datetime(2026, 1, 1),
-                            is_operational=True, notes=None)
+    starstation = Space_Station(station_id="ISS001",
+                                name="International Space Station",
+                                crew_size=6,
+                                power_level=85.5,
+                                oxygen_level=92.3,
+                                last_maintenance=datetime(2026, 1, 1),
+                                is_operational=True,
+                                notes=None)
 
     print("Valid station created:")
 
@@ -43,14 +46,16 @@ def space_station() -> None:
 
     print("Expected validation error:")
     try:
-        Spacetion(station_id="ISS001",
-                  name="International Space Station",
-                  crew_size=25, power_level=85.5,
-                  oxygen_level=92.3,
-                  last_maintenance=datetime(2026, 1, 1),
-                  is_operational=True, notes=None)
-    except ValueError as e:
-        print(e)
+        Space_Station(station_id="ISS001",
+                      name="International Space Station",
+                      crew_size=25,
+                      power_level=85.5,
+                      oxygen_level=92.3,
+                      last_maintenance=datetime(2026, 1, 1),
+                      is_operational=True,
+                      notes=None)
+    except ValidationError as e:
+        print(e.errors()[0]['msg'])
 
 
 if __name__ == "__main__":
